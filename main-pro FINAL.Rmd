@@ -1,0 +1,245 @@
+---
+title: "Ships and Economics of Norway and Troms og Finnmark"
+author: "Edvard Davidsen and Sushmit Dhar"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+---
+
+<p>&nbsp;</p>
+
+<h4> Introduction </h4>
+
+Sea travel and Norwegian culture go together like hand in glove and have done this for centuries. Norwegians often pride themselves in the heritage and traditions regarding sea travel, though the type of ships and reasons for travelling by sea have transformed since the Viking period of expansion through trade, colonization and invasions.
+
+Norway's maritime industry has morphed with the gradual change in economic demand and has seen an increase in oil and gas tankers and a definitive decrease in Vikings ships roaming the Norwegian coast.
+
+The authors of this project, Edvard and Sushmit are from two different backgrounds of "Economics" and "Nautical" studying at the University of Tromso. So, in this project, we have intended to portray a story by finding a correlation between these two subjects in Norway focusing on Northern Norway.
+
+<center>
+![](Untitled.jpg){#id .class width=200 height=250px}
+
+</center>
+ 
+
+Troms og Finnmark is the northernmost and easternmost county in Norway.
+
+Let us check how Troms and Finnmark is becoming important in terms of shipping traffic and its influence on Norway's economy over the years.
+<p>&nbsp;</p>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set
+library(tidyverse)
+library(readr)
+library(readxl)
+library(ggplot2)
+library(gganimate)
+library(hrbrthemes)
+library(prettydoc)
+library(plotly)
+library(grid)
+
+
+
+masterfile <- read_excel("masterfile.xlsx")
+ship_coming <- read_excel("Ship_coming.xlsx")
+ship_coming_T <- read_excel("Ship_coming_T.xlsx")
+ship_size <- read_excel("Ship_length.xlsx")
+ship_weight <- read_excel("Ship_tonnage.xlsx")
+tromso_kommune <- read_excel("Tromso_kommune.xlsx")
+
+masterfile$Year <- as.Date(paste(masterfile$Year, 1, 1, sep = "-"))
+
+```
+
+
+<h4> Types ships coming to Norway between 2010-2019 </h4>
+
+Aggregated statistics on notifiable arrivals to locations in Norway in the period from 2010 to 2019 as registered in Kystverket. 
+
+Note: Does not include sailings that are exempt from the duty to report, such as domestic scheduled car and passenger transport.
+
+```{r 1,echo=FALSE, warning=FALSE,fig.width=6, fig.height=3}
+plot_ly(data=masterfile, x = ~Year, y = ~Auxiliary, type = 'bar', name = 'Auxilary') %>%add_trace(y = ~Fish, name = 'Fish') %>%add_trace(y = ~Cargo, name = 'Cargo') %>%add_trace(y = ~Passenger, name = 'Passenger') %>%add_trace(y = ~Tug, name = 'Tug') %>%add_trace(y = ~Tanker, name = 'Tanker') %>%
+  layout(xaxis =list(title = 'Year', tickformat = '%Y'), yaxis = list(title = 'Number of ships'), barmode = 'stack')
+
+```
+
+
+
+<h4> Types ships coming to Troms and Finnmark between 2010-2019 </h4>
+
+
+```{r 2,echo=FALSE, warning=FALSE,fig.width=6, fig.height=3}
+plot_ly(data=masterfile, x = ~Year, y = ~T_Auxiliary, type = 'bar', name = 'Auxilary') %>%add_trace(y = ~T_Fish, name = 'Fish') %>%add_trace(y = ~T_Cargo, name = 'Cargo') %>%add_trace(y = ~T_Passenger, name = 'Passenger') %>%add_trace(y = ~T_Tug, name = 'Tug') %>%add_trace(y = ~T_Tanker, name = 'Tanker') %>%
+  layout(xaxis =list(title = 'Year', tickformat = '%Y'), yaxis = list(title = 'Number of ships'), barmode = 'stack')
+
+```
+
+<h4> All the Ships arriving to different ports in Troms and Finnmark between 2010-2019</h4>
+```{r 3,echo=FALSE, warning=FALSE}
+plot_ly(data=tromso_kommune, x = ~Ports, y = ~Number, type = 'bar') %>%  layout( xaxis = list(title = 'Ports in Troms and Finnmark'),yaxis = list(title = 'Number of ships'), barmode = 'bar')
+```
+
+<h4> Ships arriving from international countries to Norway between 2010-2019</h4>
+```{r 4,echo=FALSE, warning=FALSE}
+plot_ly(data=ship_coming, x = ~origin, y = ~number_norway, type = 'bar') %>%  layout( xaxis = list(title = 'Country of origin'),yaxis = list(title = 'Number of ships'), barmode = 'bar')
+
+```
+
+
+
+<h4> Ships arriving from international countries to Troms and Finnmark between 2010-2019</h4>
+```{r 5,echo=FALSE, warning=FALSE}
+plot_ly(data=ship_coming_T, x = ~origin, y = ~number_T, type = 'bar') %>%  layout( xaxis = list(title = 'Country of origin'),yaxis = list(title = 'Number of ships'), barmode = 'bar')
+```
+
+
+<h4> Length of ships coming to Norway between 2010-2019</h4>
+```{r 6,echo=FALSE, warning=FALSE,fig.width=6, fig.height=4}
+
+ship_size %>% plot_ly(labels = ~Size, values = ~Number, type = 'pie',
+               textinfo='label',insidetextorientation='radial') %>% layout(showlegend = F, xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+```
+
+<h4> Length of ships coming to Troms and Finnmark between 2010-2019</h4>
+```{r 7,echo=FALSE, warning=FALSE,fig.width=6, fig.height=4}
+
+ship_size %>% plot_ly(labels = ~Size, values = ~Number_T, type = 'pie',
+               textinfo='label',insidetextorientation='radial') %>% layout(showlegend = F, xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+```
+
+
+
+<h4> Weight of ships(Gross Tonnage) coming to Norway between 2010-2019</h4>
+```{r 8,echo=FALSE, warning=FALSE,fig.width=6, fig.height=4}
+
+ship_weight %>% plot_ly(labels = ~Tonnage, values = ~Numbers, type = 'pie',
+               textinfo='label',insidetextorientation='radial') %>% layout(showlegend = F, xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+```
+<h4> Weight of ships(Gross Tonnage) coming to Troms and Finnmark between 2010-2019</h4>
+```{r 9,echo=FALSE, warning=FALSE,fig.width=6, fig.height=4}
+
+ship_weight %>% plot_ly(labels = ~Tonnage, values = ~Numbers_T, type = 'pie',
+               textinfo='label',insidetextorientation='radial') %>% layout(showlegend = F, xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+```
+
+
+
+<h4> A cumulative view of the ships coming to Norway 2010-2019 </h4>
+<p>&nbsp;</p>
+
+```{r 10,echo=FALSE, warning=FALSE, message=FALSE}
+
+gg <- ggplot(masterfile, aes(Year, Total)) +  geom_point(aes(size=Total, frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Total Ship coming to Norway")
+ggplotly(gg)
+
+```
+
+<h4> A cumulative view of the ships coming to Troms and Finnmark 2010-2019 </h4>
+
+
+```{r 11,echo=FALSE, warning=FALSE, message=FALSE}
+
+gg <- ggplot(masterfile, aes(Year, T_Total)) +  geom_point(aes(size=T_Total, frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Total Ship coming to Troms and Finnmark")
+ggplotly(gg)
+
+```
+
+
+
+Our analysis makes it evident that there is a progressive increase in ships travelling in Norway and Troms og Finnmark in the last decade, but can we find any direct correlation with the economy of the country?
+
+<h4> Norway's Gross domestic product (GDP)</h4>
+
+GDP(Gross domestic product) is a measure of overall economic activity in Norway, and expresses the economic added value earned through the production of goods and services for a period. GDP is calculated in the national accounts. The national accounts are prepared in accordance with international guidelines and are suitable for making economic comparisons between countries.
+
+```{r 12,echo=FALSE, warning=FALSE, message=FALSE}
+
+gg <- ggplot(masterfile, aes(Year, GDP)) +  geom_point(aes(size=GDP, frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Norway's GDP")
+ggplotly(gg)
+
+```
+
+
+The GDP of Norway is on an increasing trend. Even with a small sample of nine years, we can still see the increase. 
+
+
+**GDP Trend with Cargo Ship Traffic**
+
+
+```{r 13, , figures-side, fig.show = "hold", out.width = "33%",echo=FALSE, warning=FALSE, message=FALSE} 
+
+ggplot(masterfile, aes(Year, GDP)) +  geom_point(aes(frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("GDP Norway")
+
+
+ggplot(masterfile, aes(Year, Cargo)) +  geom_point(aes( frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Cargo Ship arrivals in Norway")
+
+ggplot(masterfile, aes(Year, T_Cargo)) +  geom_point(aes(frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Cargo Ship arrivals in Troms and Finnmark")
+
+```
+Here we se that the three graphs move quite in a similar trend. 
+
+This may indicate that an increase in ship contributes to economic growth. This may not comes as a surprise, because the shipping industry is moving goods and providing services. These are elements of trade, which is commonly accepted as an essential factor and indicator for economic growth.
+
+
+**Trends in other types of ships**
+
+**Norway**
+
+
+```{r 14, , figures-side, fig.show = "hold", out.width = "33%",echo=FALSE, warning=FALSE, message=FALSE} 
+
+ggplot(masterfile, aes(Year, Tanker)) +  geom_point(aes(frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Tanker Ship arrivals in Norway")
+
+
+ggplot(masterfile, aes(Year, Fish)) +  geom_point(aes( frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Fishing vessels arrivals in Norway")
+
+ggplot(masterfile, aes(Year, Passenger)) +  geom_point(aes(frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Passenger Ship arrivals in Norway")
+
+```
+
+
+**Troms og Finnmark**
+
+
+
+```{r 15, , figures-side, fig.show = "hold", out.width = "33%",echo=FALSE, warning=FALSE, message=FALSE} 
+
+ggplot(masterfile, aes(Year, T_Tanker)) +  geom_point(aes(frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Tanker Ship arrivals in Troms and Finnmark")
+
+
+ggplot(masterfile, aes(Year, T_Fish)) +  geom_point(aes( frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Fishing vessels arrivals in Troms and Finnmark")
+
+ggplot(masterfile, aes(Year, T_Passenger)) +  geom_point(aes(frame = TF)) + geom_line() +  geom_smooth( size=0.2) + xlab("Year") + ylab("Number of Passenger Ship arrivals in Troms and Finnmark")
+
+```
+
+
+<h4> Conclusion </h4>
+
+Norwegians from the beginning have always lived with and from the sea. The sea encompasses Norway's coastline from the northernmost to the southernmost point and has shaped its history and economy. The shipping industry is still an essential driver of its economy and a vital source of sustenance for several Norwegians.
+
+
+The oil and gas industry generates substantial revenues for the countries economy; however, it is highly dependent on international demand which resonates with the tanker ship traffic arriving in Norway over the years.
+
+
+Fishing has been a critical source of revenue and has an indispensable role in the coastal culture of Norway for ages.  Norway's aim towards the blue economy and the growth of the fish farming industry is also evident from the increase in fishing vessel traffic over the years.
+
+Norway has a long and stunning coastline, majestic fjords and fascinating coastal cities, and the cruise or passenger ships provide a unique and more comfortable way for tourists to perceive them. And the demand to venture this remarkable part of the world is on the rise which is visible from the increase in cruise ship traffic, especially in the Northern parts for the last years.
+
+We know that GDP and shipping are intertwined based on many studies, such as carried out for Europe by [OECD's study](https://www.oecd.org/sti/ind/Session%201_c%20-%20Andrew%20Goodwin%20-%20Presentation%20for%20Website.pdf "OECD's study" ).
+
+With our findings, we can see that total ships coming to "Troms og Finnmark" and "Norway" influenced with the GDP of the country. Their conjunction is a fair assumption since a country with the increasing economy will have more activity and therefore increasing cargo ship traffic moving goods and providing services.
+
+Hence, we can conclude from our study that the shipping traffic resonates with the country's economy.
+
+For the Nautical data, we want to thank Kystverket for letting us use their database [datasite](https://kystdatahuset.no"datasite"). And for the Economic data, we want to thank Statistics Norway [datasite](https://www.ssb.no/nasjonalregnskap-og-konjunkturer/faktaside/norsk-okonomi).
+
